@@ -50,6 +50,30 @@ def maximum_sharpe_portfolio(expected_returns, cov_matrix):
     )
     return result
 
+def generate_random_portfolios(n_portfolios, expected_returns, cov_matrix):
+    returns = []
+    volatilities = []
+    sharpe_ratios = []
+    weights_list = []
+    for _ in range(n_portfolios):
+        n_assets = len(expected_returns)
+        w = np.random.random(n_assets)
+        w = w / np.sum(w)
+        ret, vol = portfolio_performance(w, expected_returns, cov_matrix)
+        sharpe = sharpe_ratio(w, expected_returns, cov_matrix)
+
+        returns.append(ret)
+        volatilities.append(vol)
+        sharpe_ratios.append(sharpe)
+        weights_list.append(w)
+
+    return {
+        'returns': np.array(returns),
+        'volatilities': np.array(volatilities),
+        'sharpe_ratios': np.array(sharpe_ratios),
+        'weights': np.array(weights_list)
+        }
+
 if __name__ == "__main__":
     from data_loader import get_all_pairs, calculate_log_returns
     import MetaTrader5 as mt5
@@ -76,3 +100,8 @@ if __name__ == "__main__":
     
     print("\nMaximum Sharpe Portfolio weights:")
     print(dict(zip(symbols, max_sharpe.x.round(4))))
+
+    results = generate_random_portfolios(5000, expected_returns, cov_matrix)
+    print(f"Generated {len(results['returns'])} portfolios")
+    print(f"Return range: {results['returns'].min():.4f} to {results['returns'].max():.4f}")
+    print(f"Volatility range: {results['volatilities'].min():.4f} to {results['volatilities'].max():.4f}")
