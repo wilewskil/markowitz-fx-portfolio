@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize  
+from scipy.optimize import minimize 
+
 
 
 def calculate_expected_returns(log_returns):
@@ -77,6 +78,7 @@ def generate_random_portfolios(n_portfolios, expected_returns, cov_matrix):
 if __name__ == "__main__":
     from data_loader import get_all_pairs, calculate_log_returns
     import MetaTrader5 as mt5
+    from visualizer import plot_efficient_frontier
     
     symbols = ['EURUSD', 'GBPUSD', 'EURJPY', 'USDJPY']
     timeframe = mt5.TIMEFRAME_H4
@@ -105,3 +107,6 @@ if __name__ == "__main__":
     print(f"Generated {len(results['returns'])} portfolios")
     print(f"Return range: {results['returns'].min():.4f} to {results['returns'].max():.4f}")
     print(f"Volatility range: {results['volatilities'].min():.4f} to {results['volatilities'].max():.4f}")
+
+    results = generate_random_portfolios(5000, expected_returns, cov_matrix)
+    plot_efficient_frontier(results, min_var, max_sharpe, expected_returns, cov_matrix, symbols)
